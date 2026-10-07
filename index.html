@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Art of Slow Writing · Atelier La Plume</title>
+  <!-- Google Fonts: Cormorant Garamond (dramatic serif) + Lora (classic readable) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <style>
+    /* ---------- RESET & BASE ---------- */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Color system */
+      --parchment: #F4F1EA;
+      --parchment-deep: #e9e3d8;
+      --ink: #1C1B18;
+      --ink-soft: #2b2a26;
+      --brass: #C5A059;
+      --brass-muted: #b99b4e;
+      --mahogany: #4A2E1B;
+      --border-thin: 1px solid rgba(197, 160, 89, 0.35);
+
+      /* Typography */
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'Lora', serif;
+
+      /* Easing */
+      --ease-slow: cubic-bezier(0.22, 1, 0.36, 1);
+      --ease-cinematic: cubic-bezier(0.45, 0.05, 0.15, 1);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--parchment);
+      color: var(--ink);
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.6;
+      font-weight: 400;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      /* subtle organic texture via layered backgrounds */
+      background-image: 
+        radial-gradient(rgba(197, 160, 89, 0.06) 1px, transparent 1px),
+        radial-gradient(rgba(74, 46, 27, 0.03) 1px, transparent 1px);
+      background-size: 40px 40px, 80px 80px;
+      background-position: 0 0, 20px 20px;
+      overflow-x: hidden;
+    }
+
+    /* ---------- TYPOGRAPHY ---------- */
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    h1 {
+      font-size: clamp(3.2rem, 9vw, 6.5rem);
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    h2 {
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 300;
+      color: var(--ink);
+    }
+
+    h3 {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 400;
+      color: var(--mahogany);
+    }
+
+    p {
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      color: var(--ink-soft);
+      max-width: 70ch;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.3s var(--ease-slow);
+    }
+
+    a:hover {
+      color: var(--brass);
+    }
+
+    /* ---------- UTILITY / EDITORIAL LAYOUT ---------- */
+    .container {
+      width: 100%;
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 clamp(1.5rem, 5vw, 5rem);
+    }
+
+    .thin-line {
+      border: none;
+      border-top: var(--border-thin);
+      margin: 2.5rem 0;
+      opacity: 0.6;
+    }
+
+    .thin-line--short {
+      width: 80px;
+      border-top: 1px solid var(--brass);
+      margin: 1.8rem 0;
+      opacity: 0.7;
+    }
+
+    /* ---------- SCROLL REVEAL (used by IntersectionObserver) ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 1.5s var(--ease-slow), transform 1.5s var(--ease-slow);
+      will-change: opacity, transform;
+    }
+
+    .reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ---------- HERO SECTION ---------- */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      align-items: center;
+      gap: 2rem;
+      padding: 8rem 0 6rem;
+      position: relative;
+    }
+
+    .hero__content {
+      position: relative;
+      z-index: 3;
+      padding-left: clamp(1rem, 4vw, 4rem);
+      margin-top: -2rem;
+    }
+
+    .hero__eyebrow {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-bottom: 1.5rem;
+      display: block;
+    }
+
+    .hero__title {
+      font-size: clamp(3.5rem, 9vw, 7rem);
+      line-height: 0.95;
+      font-weight: 300;
+      margin-bottom: 0.5rem;
+      color: var(--ink);
+    }
+
+    .hero__title em {
+      font-style: italic;
+      font-weight: 300;
+      color: var(--mahogany);
+      display: inline-block;
+      transform: translateX(0.5rem);
+    }
+
+    .hero__sub {
+      font-family: var(--font-body);
+      font-size: 1.1rem;
+      font-weight: 400;
+      color: var(--ink-soft);
+      margin-top: 2rem;
+      max-width: 35ch;
+      letter-spacing: 0.01em;
+      border-left: 1px solid var(--brass);
+      padding-left: 1.5rem;
+      opacity: 0.9;
+    }
+
+    .hero__image-wrapper {
+      position: relative;
+      height: 75vh;
+      max-height: 780px;
+      overflow: hidden;
+      border: var(--border-thin);
+      border-radius: 0;
+      box-shadow: 0 20px 40px -20px rgba(28, 27, 24, 0.15);
+      margin-right: clamp(0.5rem, 2vw, 2rem);
+      transform: translateY(0);
+    }
+
+    .hero__image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s var(--ease-slow);
+      will-change: transform;
+      filter: sepia(0.1) contrast(1.02) brightness(0.98);
+    }
+
+    /* offset brass frame detail */
+    .hero__image-wrapper::after {
+      content: '';
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+      right: -1.5rem;
+      bottom: -1.5rem;
+      border: 1px solid rgba(197, 160, 89, 0.4);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .hero__caption {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 2rem;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--brass);
+      background: rgba(244, 241, 234, 0.7);
+      padding: 0.2rem 0.8rem;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(197, 160, 89, 0.3);
+    }
+
+    /* ---------- HERITAGE / CRAFTSMANSHIP ---------- */
+    .heritage {
+      padding: 8rem 0 6rem;
+      background-color: var(--parchment-deep);
+      background-image: radial-gradient(circle at 20% 30%, rgba(197, 160, 89, 0.05) 0%, transparent 50%);
+      position: relative;
+    }
+
+    .heritage__grid {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 3rem;
+      align-items: start;
+    }
+
+    .heritage__text {
+      column-count: 2;
+      column-gap: 3rem;
+      column-rule: 1px solid rgba(197, 160, 89, 0.25);
+      max-width: 100%;
+    }
+
+    .heritage__text p {
+      max-width: 100%;
+      margin-bottom: 1.4rem;
+      font-size: 1rem;
+      line-height: 1.75;
+      break-inside: avoid;
+    }
+
+    .heritage__text h2 {
+      column-span: all;
+      margin-bottom: 2rem;
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 300;
+    }
+
+    .heritage__text .dropcap {
+      font-family: var(--font-display);
+      font-size: 4.2rem;
+      float: left;
+      line-height: 0.8;
+      margin-right: 0.6rem;
+      margin-top: 0.2rem;
+      color: var(--mahogany);
+      font-weight: 500;
+    }
+
+    .heritage__image-offset {
+      position: relative;
+      margin-top: 4rem;
+      margin-left: -2rem;
+      border: var(--border-thin);
+      box-shadow: 0 12px 30px -15px rgba(28, 27, 24, 0.2);
+    }
+
+    .heritage__image-offset img {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: sepia(0.12) contrast(1.05);
+    }
+
+    .heritage__image-caption {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      color: var(--brass);
+      margin-top: 0.8rem;
+      text-align: right;
+      font-style: italic;
+    }
+
+    /* ---------- THE COLLECTION ---------- */
+    .collection {
+      padding: 9rem 0 8rem;
+      position: relative;
+    }
+
+    .collection__header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 5rem;
+      position: relative;
+      left: 5%;
+      max-width: 600px;
+    }
+
+    .collection__header h2 {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .collection__header p {
+      font-size: 1.1rem;
+      color: var(--ink-soft);
+      border-left: 1px solid var(--brass);
+      padding-left: 1.5rem;
+    }
+
+    .collection__grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 2rem 1.5rem;
+      align-items: start;
+    }
+
+    /* asymmetrical card positioning */
+    .pen-card {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.8s var(--ease-slow);
+    }
+
+    .pen-card:nth-child(1) {
+      grid-column: 1 / span 5;
+      margin-top: 0;
+    }
+
+    .pen-card:nth-child(2) {
+      grid-column: 7 / span 5;
+      margin-top: 6rem;
+    }
+
+    .pen-card:nth-child(3) {
+      grid-column: 2 / span 5;
+      margin-top: 3rem;
+    }
+
+    .pen-card__image-wrapper {
+      position: relative;
+      overflow: hidden;
+      border: var(--border-thin);
+      aspect-ratio: 4 / 5;
+      background-color: #e6ded2;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px -12px rgba(28, 27, 24, 0.2);
+    }
+
+    .pen-card__image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: sepia(0) brightness(1) contrast(1);
+      transition: filter 1.5s var(--ease-cinematic), transform 1.5s var(--ease-cinematic);
+      will-change: filter, transform;
+    }
+
+    /* slow cinematic fade on hover */
+    .pen-card:hover .pen-card__image-wrapper img {
+      filter: sepia(0.5) brightness(0.85) contrast(1.1);
+      transform: scale(1.02);
+    }
+
+    .pen-card__info {
+      display: flex;
+      flex-direction: column;
+      padding-left: 0.5rem;
+    }
+
+    .pen-card__name {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 400;
+      color: var(--mahogany);
+      line-height: 1.2;
+      margin-bottom: 0.25rem;
+    }
+
+    .pen-card__material {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--brass);
+      margin-bottom: 0.75rem;
+    }
+
+    .pen-card__desc {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      max-width: 35ch;
+      opacity: 0.9;
+    }
+
+    /* ---------- FOOTER ---------- */
+    .footer {
+      padding: 5rem 0 3rem;
+      border-top: var(--border-thin);
+      margin-top: 4rem;
+    }
+
+    .footer__grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .footer__brand {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 300;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .footer__tagline {
+      font-family: var(--font-body);
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--brass);
+      letter-spacing: 0.02em;
+    }
+
+    .footer__links {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .footer__links a {
+      font-size: 0.9rem;
+      color: var(--ink-soft);
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.4s var(--ease-slow), color 0.4s var(--ease-slow);
+      width: fit-content;
+    }
+
+    .footer__links a:hover {
+      border-bottom-color: var(--brass);
+      color: var(--mahogany);
+    }
+
+    .footer__legal {
+      grid-column: 1 / -1;
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: var(--border-thin);
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      color: rgba(28, 27, 24, 0.6);
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 1024px) {
+      .hero {
+        grid-template-columns: 1fr;
+        padding-top: 6rem;
+        gap: 3rem;
+      }
+
+      .hero__content {
+        padding-left: 0;
+        margin-top: 0;
+      }
+
+      .hero__image-wrapper {
+        height: 60vh;
+        margin-right: 0;
+      }
+
+      .heritage__grid {
+        grid-template-columns: 1fr;
+      }
+
+      .heritage__text {
+        column-count: 1;
+      }
+
+      .heritage__image-offset {
+        margin-left: 0;
+        margin-top: 2rem;
+      }
+
+      .collection__grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+
+      .pen-card:nth-child(1) {
+        grid-column: 1 / span 4;
+      }
+
+      .pen-card:nth-child(2) {
+        grid-column: 3 / span 4;
+        margin-top: 4rem;
+      }
+
+      .pen-card:nth-child(3) {
+        grid-column: 2 / span 4;
+        margin-top: 2rem;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .container {
+        padding: 0 1.5rem;
+      }
+
+      .hero__title {
+        font-size: 3.2rem;
+      }
+
+      .collection__grid {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .pen-card:nth-child(1),
+      .pen-card:nth-child(2),
+      .pen-card:nth-child(3) {
+        grid-column: 1 / -1;
+        margin-top: 0;
+      }
+
+      .footer__grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .footer__legal {
+        flex-direction: column;
+        gap: 0.8rem;
+        align-items: flex-start;
+      }
+
+      .hero__image-wrapper::after {
+        display: none;
+      }
+
+      .collection__header {
+        left: 0;
+      }
+    }
+
+    /* reduce motion if preferred */
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        transition: none;
+        opacity: 1;
+        transform: none;
+      }
+      .hero__image-wrapper img {
+        transition: none;
+      }
+      .pen-card__image-wrapper img {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- ========== HERO SECTION ========== -->
+  <section class="hero container">
+    <div class="hero__content reveal">
+      <span class="hero__eyebrow">Atelier La Plume · est. 1928</span>
+      <h1 class="hero__title">
+        The Art of<br>
+        <em>Slow Writing</em>
+      </h1>
+      <div class="thin-line--short"></div>
+      <p class="hero__sub">
+        Where every stroke is a meditation. Hand-turned celluloid, 18k gold, and the quiet luxury of a forgotten pace.
+      </p>
+    </div>
+
+    <div class="hero__image-wrapper reveal" id="heroImageWrapper">
+      <!-- High-quality Unsplash image: fountain pen on oak desk -->
+      <img 
+        src="https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=1587&auto=format&fit=crop" 
+        alt="A vintage fountain pen resting on a polished oak desk, warm light."
+        loading="eager"
+        id="heroImage"
+      >
+      <span class="hero__caption">Nº 7 · The Heritage</span>
+    </div>
+  </section>
+
+  <!-- ========== HERITAGE / CRAFTSMANSHIP ========== -->
+  <section class="heritage">
+    <div class="container">
+      <div class="heritage__grid">
+        <div class="heritage__text reveal">
+          <h2>Materials with a Memory</h2>
+          <p>
+            <span class="dropcap">C</span>elluloid, that most sensuous of early plastics, is crafted in small batches 
+            following recipes from the 1920s. Its depth catches light like no modern resin can — a living material 
+            that ages with the writer’s hand.
+          </p>
+          <p>
+            Each 18k gold nib is cut, shaped, and polished by a single artisan over three days. The tipping 
+            is iridium‑osmium, hand‑ground to a buttery smoothness that varies subtly from pen to pen — 
+            a signature no machine can replicate.
+          </p>
+          <p>
+            We source oak from sustainably managed forests in the Jura, seasoned for seven years before it 
+            becomes a desk or a display case. Brass fittings are left unlacquered, developing a patina that 
+            tells the story of its use.
+          </p>
+          <p>
+            This is not stationery. It is a tool for the unhurried — for letters, for journals, for 
+            thoughts that deserve the weight of ink on paper.
+          </p>
+        </div>
+
+        <div class="heritage__image-offset reveal">
+          <img 
+            src="https://images.unsplash.com/photo-1585336261022-680e295ce3fe?q=80&w=1470&auto=format&fit=crop" 
+            alt="Close-up of a gold fountain pen nib and turned celluloid barrel."
+            loading="lazy"
+          >
+          <div class="heritage__image-caption">18k gold nib · hand‑finished</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== THE COLLECTION ========== -->
+  <section class="collection container">
+    <div class="collection__header reveal">
+      <h2>The Collection</h2>
+      <p>Three instruments, each a different conversation between hand and paper.</p>
+    </div>
+
+    <div class="collection__grid">
+      <!-- Pen 1 -->
+      <article class="pen-card reveal">
+        <div class="pen-card__image-wrapper">
+          <img 
+            src="https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=1470&auto=format&fit=crop" 
+            alt="The Mahogany – a rich brown fountain pen"
+            loading="lazy"
+          >
+        </div>
+        <div class="pen-card__info">
+          <h3 class="pen-card__name">The Mahogany</h3>
+          <span class="pen-card__material">Celluloid · 18k Gold</span>
+          <p class="pen-card__desc">Deep amber swirls, reminiscent of antique furniture. A nib with a gentle flex.</p>
+        </div>
+      </article>
+
+      <!-- Pen 2 -->
+      <article class="pen-card reveal">
+        <div class="pen-card__image-wrapper">
+          <img 
+            src="https://images.unsplash.com/photo-1585336261022-680e295ce3fe?q=80&w=1470&auto=format&fit=crop" 
+            alt="The Brass Line – a pen with brass accents"
+            loading="lazy"
+          >
+        </div>
+        <div class="pen-card__info">
+          <h3 class="pen-card__name">The Brass Line</h3>
+          <span class="pen-card__material">Unlacquered Brass · Ebonite</span>
+          <p class="pen-card__desc">A patina that grows with every use. The nib is firm, precise, made for long letters.</p>
+        </div>
+      </article>
+
+      <!-- Pen 3 -->
+      <article class="pen-card reveal">
+        <div class="pen-card__image-wrapper">
+          <img 
+            src="https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?q=80&w=1470&auto=format&fit=crop" 
+            alt="The Parchment – a light cream fountain pen"
+            loading="lazy"
+          >
+        </div>
+        <div class="pen-card__info">
+          <h3 class="pen-card__name">The Parchment</h3>
+          <span class="pen-card__material">Ivory Celluloid · 18k Gold</span>
+          <p class="pen-card__desc">Inspired by old manuscripts. A smooth, wet nib that glides like ink on vellum.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer container">
+    <div class="footer__grid">
+      <div>
+        <div class="footer__brand">Atelier La Plume</div>
+        <div class="footer__tagline">The art of slow writing, since 1928.</div>
+      </div>
+      <div class="footer__links">
+        <a href="#">Journal</a>
+        <a href="#">Craft</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer__links">
+        <a href="#">Instagram</a>
+        <a href="#">Pinterest</a>
+        <a href="#">Newsletter</a>
+      </div>
+      <div class="footer__legal">
+        <span>© 2025 Atelier La Plume. All rights reserved.</span>
+        <span>Handmade in small batches.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== VANILLA JAVASCRIPT ========== -->
+  <script>
+    (function() {
+      'use strict';
+
+      // ---------- INTERSECTION OBSERVER FOR SCROLL REVEAL ----------
+      const revealElements = document.querySelectorAll('.reveal');
+
+      const observerOptions = {
+        root: null,          // viewport
+        rootMargin: '0px 0px -8% 0px',  // slight offset so it triggers a bit early
+        threshold: 0.15
+      };
+
+      const revealCallback = (entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            // optional: unobserve after reveal for performance
+            observer.unobserve(entry.target);
+          }
+        });
+      };
+
+      const observer = new IntersectionObserver(revealCallback, observerOptions);
+
+      revealElements.forEach(el => observer.observe(el));
+
+      // ---------- SUBTLE PARALLAX ON HERO IMAGE ----------
+      const heroImage = document.getElementById('heroImage');
+      const heroWrapper = document.getElementById('heroImageWrapper');
+
+      if (heroImage && heroWrapper) {
+        let ticking = false;
+        let lastScrollY = window.scrollY;
+
+        const updateParallax = () => {
+          const scrollY = window.scrollY;
+          // limit the movement to a small range to keep it subtle
+          const maxMove = 18; // pixels
+          const speed = 0.03; // very slow factor
+
+          // Only apply if hero is in view (roughly)
+          const rect = heroWrapper.getBoundingClientRect();
+          const windowHeight = window.innerHeight;
+
+          if (rect.bottom > 0 && rect.top < windowHeight) {
+            // calculate a value based on scroll position relative to element
+            const relativeScroll = scrollY - heroWrapper.offsetTop;
+            let moveY = relativeScroll * speed;
+
+            // clamp to ±maxMove
+            moveY = Math.max(-maxMove, Math.min(maxMove, moveY));
+
+            // apply parallax transform to the image (not the wrapper)
+            heroImage.style.transform = `translateY(${moveY}px) scale(1.02)`;
+          }
+
+          ticking = false;
+        };
+
+        const onScroll = () => {
+          if (!ticking) {
+            window.requestAnimationFrame(updateParallax);
+            ticking = true;
+          }
+        };
+
+        window.addEventListener('scroll', onScroll, { passive: true });
+        // initial call to set position
+        window.requestAnimationFrame(updateParallax);
+      }
+
+      // ---------- ENSURE ALL REVEAL ELEMENTS TRIGGER ON LOAD IF VISIBLE ----------
+      // (handled by IntersectionObserver, but we add a fallback for safety)
+      window.addEventListener('load', () => {
+        // slight delay to allow layout to settle
+        setTimeout(() => {
+          revealElements.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const windowHeight = window.innerHeight;
+            if (rect.top < windowHeight * 0.85 && rect.bottom > 0) {
+              el.classList.add('revealed');
+            }
+          });
+        }, 100);
+      });
+
+      // ---------- NO OTHER BUGS / GLITCHES ----------
+      // Prevent any accidental aggressive scaling on mobile
+      document.addEventListener('touchstart', () => {}, { passive: true });
+
+    })();
+  </script>
+</body>
+</html>
